@@ -4,12 +4,12 @@ const url = require('url');
 const PORT = 2005;
 
 const server = http.createServer((req, res) => {
-  // Parse the URL to extract the pathname and query parameters.
+
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
   const query = parsedUrl.query;
 
-  // Set the response header to indicate that the content type is JSON.
+
   res.setHeader('Content-Type', 'application/json');
 
   // Root endpoint: GET "/"
@@ -19,6 +19,7 @@ const server = http.createServer((req, res) => {
 
   // Endpoint with path parameter: GET "/greet/:name"
   } else if (req.method === 'GET' && pathname.startsWith('/greet/')) {
+    
     // Split the path into parts to extract the 'name' parameter.
     const parts = pathname.split('/');
     if (parts.length === 3 && parts[2]) {
