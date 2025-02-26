@@ -256,3 +256,121 @@ res.setHeader('Content-Type', 'application/json');
 - Explanation:
     - Ensures that all responses are sent in JSON format.  
 
+#### 6. Handling Endpoints
+
+- <b>Root Endpoint </b>(GET /):
+
+```
+if (req.method === 'GET' && pathname === '/') {
+  res.writeHead(200);
+  res.end(JSON.stringify({ msg: "Hello World!!!" }));
+}
+```
+
+- <b>Explanation:</b>
+     - Responds with a JSON message when the root URL is requested via GET.
+
+- <b>Path Parameter Endpoint</b> (GET /greet/:name):
+
+```
+else if (req.method === 'GET' && pathname.startsWith('/greet/')) {
+  const parts = pathname.split('/');
+  if (parts.length === 3 && parts[2]) {
+    const name = decodeURIComponent(parts[2]);
+    res.writeHead(200);
+    res.end(JSON.stringify({ msg: `Hello ${name}!` }));
+  } else {
+    res.writeHead(400);
+    res.end(JSON.stringify({ error: "Name parameter missing" }));
+  }
+}
+```
+- <b>Explanation:</b>
+    - Extracts the name from the URL and responds with a personalized greeting.
+    - Validates that the name parameter is provided; otherwise, returns an error.
+
+- <b>Query Parameter Endpoint</b> (GET /greeting):
+
+```
+else if (req.method === 'GET' && pathname === '/greeting') {
+  const { name, age } = query;
+  if (name && age) {
+    res.writeHead(200);
+    res.end(JSON.stringify({ msg: `Hello my name is ${name} and im ${age} years old.` }));
+  } else {
+    res.writeHead(400);
+    res.end(JSON.stringify({ error: "Name or age query parameter missing" }));
+  }
+}
+```
+- <b>Explanation:</b>
+    - Retrieves the name and age from the query string and responds with a message.
+    - Validates that both query parameters are provided.
+- <b>POST Endpoint with JSON Body</b> (POST /greet):
+
+```
+else if (req.method === 'POST' && pathname === '/greet') {
+  let body = '';
+  req.on('data', chunk => {
+    body += chunk.toString();
+  });
+  req.on('end', () => {
+    try {
+      const parsedBody = JSON.parse(body);
+      const { name, age } = parsedBody;
+      if (name && age) {
+        res.writeHead(200);
+        res.end(JSON.stringify({ msg: `Hello my name is ${name} and im ${age} years old.` }));
+      } else {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: "Name or age missing in request body" }));
+      }
+    } catch (error) {
+      res.writeHead(400);
+      res.end(JSON.stringify({ error: "Invalid JSON in request body" }));
+    }
+  });
+}
+
+```
+- <b>Explanation:</b>
+    - Collects data from the request body, parses it as JSON, and responds based on the provided name and age.
+    - Includes error handling for invalid JSON or missing parameters.
+- <b>Fallback for Undefined Routes:</b>
+
+```
+else {
+  res.writeHead(404);
+  res.end(JSON.stringify({ error: "Route not found" }));
+}
+```
+- Explanation:
+    - Returns a 404 error if the request does not match any defined endpoint.
+
+#### 7. Starting the Server
+```
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+- <b>Explanation:</b>
+    - The server listens on the specified port.
+    - Logs a message to the console indicating that the server is running.
+
+
+## Summary
+This documentation provides a comprehensive walkthrough of the `simple-node-rest-example` project:
+
+- <b>Project Overview:</b> Introduces the RESTful API built using only Node.js core modules.
+
+- <b>Project Setup and Creation:</b> Outlines how to initialize the project with npm init, install nodemon, and set up the project structure.
+
+- <b>Installation and Running the Application:</b> Explains how to clone/download the repository, install dependencies with npm install, and run the server in both development and production modes.
+
+- <b>Package Configuration:</b> Details the contents of the package.json file, including scripts and dependencies.
+
+- <b>Server Code Explanation:</b> Breaks down each part of the server.js file, explaining how the HTTP server is created and how different endpoints are handled.
+
+- <b>Detailed Code Breakdown:</b> Provides in-depth explanations of the code segments to help beginners understand the logic behind each endpoint and middleware operation.
+
+This guide is intended to help beginners understand how to build and manage a Node.js project without any external frameworks. Happy coding!
